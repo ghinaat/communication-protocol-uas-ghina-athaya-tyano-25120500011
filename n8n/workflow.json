@@ -1,0 +1,100 @@
+{
+  "name": "UAS - Task Order Tracking Orchestration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-task",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook: New Task Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8088/api/tasks",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"title\": $json[\"title\"], \"assignee\": $json[\"assignee\"], \"priority\": $json[\"priority\"] } }}",
+        "options": {
+          "timeout": 5000,
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 1000
+          }
+        }
+      },
+      "id": "http-create-task",
+      "name": "Call API: Create Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "notes": "Reliability: retry 3x dengan delay 1 detik jika API tidak merespon (timeout/5xx)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "" },
+          "conditions": [
+            {
+              "leftValue": "={{$json.statusCode}}",
+              "rightValue": 201,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-success",
+      "name": "IF Task Created (201)?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://hooks.slack.com/services/PLACEHOLDER",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": \"Task baru dibuat: \" + $json[\"title\"] + \" untuk \" + $json[\"assignee\"] } }}"
+      },
+      "id": "notify-success",
+      "name": "Notify: Task Created",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 200],
+      "notes": "Simulasi notifikasi. URL webhook Slack bersifat placeholder, tidak berisi credential asli."
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { error: 'Gagal membuat task setelah retry maksimum', originalError: $json } }];"
+      },
+      "id": "log-failure",
+      "name": "Log: Task Creation Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400],
+      "notes": "Observability: mencatat kegagalan setelah retry habis untuk dianalisis di execution history n8n."
+    }
+  ],
+  "connections": {
+    "Webhook: New Task Request": {
+      "main": [[{ "node": "Call API: Create Task", "type": "main", "index": 0 }]]
+    },
+    "Call API: Create Task": {
+      "main": [[{ "node": "IF Task Created (201)?", "type": "main", "index": 0 }]]
+    },
+    "IF Task Created (201)?": {
+      "main": [
+        [{ "node": "Notify: Task Created", "type": "main", "index": 0 }],
+        [{ "node": "Log: Task Creation Failed", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <rect width="1100" height="620" fill="#ffffff"/>
+  <text x="550" y="35" text-anchor="middle" font-size="22" font-weight="bold" fill="#0f172a">Architecture &amp; Data Flow - Task/Order Tracking API</text>
+
+  <!-- Client -->
+  <rect x="40" y="90" width="170" height="90" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="125" y="130" text-anchor="middle" font-size="15" font-weight="bold" fill="#0c4a6e">Client</text>
+  <text x="125" y="150" text-anchor="middle" font-size="12" fill="#0c4a6e">Postman / Wireshark</text>
+
+  <!-- Arrow client -> API -->
+  <line x1="210" y1="135" x2="300" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="255" y="122" text-anchor="middle" font-size="11" fill="#334155">HTTP REST</text>
+
+  <!-- REST API -->
+  <rect x="300" y="70" width="220" height="130" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="410" y="100" text-anchor="middle" font-size="15" font-weight="bold" fill="#14532d">Task/Order Tracking API</text>
+  <text x="410" y="120" text-anchor="middle" font-size="11" fill="#14532d">Flask (Python), port 8088</text>
+  <text x="410" y="140" text-anchor="middle" font-size="11" fill="#14532d">POST/GET/PUT/DELETE /api/tasks</text>
+  <text x="410" y="160" text-anchor="middle" font-size="11" fill="#14532d">Status transition validation</text>
+  <text x="410" y="180" text-anchor="middle" font-size="11" fill="#14532d">Request ID + timing middleware</text>
+
+  <!-- Arrow API -> Storage -->
+  <line x1="410" y1="200" x2="410" y2="260" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="460" y="235" text-anchor="middle" font-size="11" fill="#334155">read/write</text>
+
+  <!-- Storage -->
+  <rect x="300" y="260" width="220" height="70" rx="10" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+  <text x="410" y="290" text-anchor="middle" font-size="14" font-weight="bold" fill="#713f12">In-memory Store</text>
+  <text x="410" y="310" text-anchor="middle" font-size="11" fill="#713f12">TASKS dict (demo storage)</text>
+
+  <!-- Arrow API -> Log -->
+  <line x1="520" y1="135" x2="620" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="570" y="122" text-anchor="middle" font-size="11" fill="#334155">log</text>
+
+  <!-- Log / Observability -->
+  <rect x="620" y="70" width="220" height="130" rx="10" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+  <text x="730" y="100" text-anchor="middle" font-size="15" font-weight="bold" fill="#831843">Observability Layer</text>
+  <text x="730" y="122" text-anchor="middle" font-size="11" fill="#831843">app.log (request/response)</text>
+  <text x="730" y="142" text-anchor="middle" font-size="11" fill="#831843">X-Request-ID (correlation ID)</text>
+  <text x="730" y="162" text-anchor="middle" font-size="11" fill="#831843">X-Response-Time header</text>
+  <text x="730" y="182" text-anchor="middle" font-size="11" fill="#831843">Status code per request</text>
+
+  <!-- n8n -->
+  <rect x="620" y="260" width="220" height="110" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="730" y="290" text-anchor="middle" font-size="15" font-weight="bold" fill="#4c1d95">n8n Workflow</text>
+  <text x="730" y="310" text-anchor="middle" font-size="11" fill="#4c1d95">Webhook trigger -&gt; Call API</text>
+  <text x="730" y="328" text-anchor="middle" font-size="11" fill="#4c1d95">Retry 3x on failure</text>
+  <text x="730" y="346" text-anchor="middle" font-size="11" fill="#4c1d95">Notify on success / log on error</text>
+
+  <!-- Arrow n8n <-> API -->
+  <line x1="620" y1="300" x2="520" y2="180" stroke="#334155" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <text x="600" y="235" text-anchor="middle" font-size="11" fill="#334155">orchestrates</text>
+
+  <!-- Wireshark note -->
+  <rect x="40" y="260" width="170" height="90" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+  <text x="125" y="290" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Wireshark</text>
+  <text x="125" y="308" text-anchor="middle" font-size="11" fill="#334155">Capture di interface</text>
+  <text x="125" y="324" text-anchor="middle" font-size="11" fill="#334155">loopback (filter: http)</text>
+
+  <line x1="125" y1="260" x2="125" y2="180" stroke="#334155" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+
+  <!-- Legend / flow explanation -->
+  <rect x="40" y="420" width="1020" height="160" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="60" y="450" font-size="13" font-weight="bold" fill="#0f172a">Alur Data Flow:</text>
+  <text x="60" y="475" font-size="12" fill="#334155">1. Client (Postman) mengirim request REST ke API (create task, update status, get, delete).</text>
+  <text x="60" y="497" font-size="12" fill="#334155">2. API memvalidasi request, memproses ke in-memory store, dan mengembalikan response dengan status code sesuai.</text>
+  <text x="60" y="519" font-size="12" fill="#334155">3. Setiap request/response dicatat di observability layer: log file, request ID, response time.</text>
+  <text x="60" y="541" font-size="12" fill="#334155">4. n8n dapat memicu pembuatan task melalui webhook, memanggil API, retry jika gagal, lalu mengirim notifikasi.</text>
+  <text x="60" y="563" font-size="12" fill="#334155">5. Wireshark menangkap traffic HTTP di localhost untuk membuktikan protokol dan payload transaksi.</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+  </defs>
+</svg>

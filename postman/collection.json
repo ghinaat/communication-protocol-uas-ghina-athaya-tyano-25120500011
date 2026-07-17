@@ -1,0 +1,101 @@
+{
+  "info": {
+    "_postman_id": "d6f1a2e0-uas-task-tracking",
+    "name": "UAS - Task Order Tracking API (Ghina Athaya - 25120500011)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8088" }
+  ],
+  "item": [
+    {
+      "name": "1. SUCCESS - Create Task",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Kirim laporan ke client\",\n  \"assignee\": \"Ghina\",\n  \"priority\": \"high\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/tasks", "host": ["{{base_url}}"], "path": ["api", "tasks"] }
+      },
+      "response": []
+    },
+    {
+      "name": "2. SUCCESS - Update Status (pending -> in_progress)",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"in_progress\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/tasks/1/status", "host": ["{{base_url}}"], "path": ["api", "tasks", "1", "status"] }
+      },
+      "response": []
+    },
+    {
+      "name": "3. GET - List All Tasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/tasks", "host": ["{{base_url}}"], "path": ["api", "tasks"] }
+      },
+      "response": []
+    },
+    {
+      "name": "4. GET - Task Detail by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/tasks/1", "host": ["{{base_url}}"], "path": ["api", "tasks", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "5. DELETE - Cancel/Delete Task",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/tasks/1", "host": ["{{base_url}}"], "path": ["api", "tasks", "1"] }
+      },
+      "response": []
+    },
+    {
+      "name": "6. FAILURE - Create Task without title (400)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assignee\": \"Ghina\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/tasks", "host": ["{{base_url}}"], "path": ["api", "tasks"] }
+      },
+      "response": []
+    },
+    {
+      "name": "7. FAILURE - Invalid Status Transition (409)",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"pending\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/tasks/1/status", "host": ["{{base_url}}"], "path": ["api", "tasks", "1", "status"] },
+        "description": "Kirim request ini SETELAH task berstatus in_progress atau done. Server akan menolak karena transisi tidak diizinkan."
+      },
+      "response": []
+    },
+    {
+      "name": "8. FAILURE - Task Not Found (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/tasks/999", "host": ["{{base_url}}"], "path": ["api", "tasks", "999"] }
+      },
+      "response": []
+    }
+  ]
+}
