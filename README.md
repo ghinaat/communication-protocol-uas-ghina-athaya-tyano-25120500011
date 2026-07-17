@@ -11,8 +11,7 @@
 - Judul Project: Task/Order Tracking API (Use Case 4)
 
 ## Link Penting
-- GitHub: (isi link repo ini)
-- YouTube Demo (Unlisted): (isi setelah upload video)
+- YouTube Demo (Unlisted): 
 
 ## Deskripsi Singkat
 Mini project ini mengimplementasikan **Task/Order Tracking API** menggunakan
